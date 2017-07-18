@@ -1,0 +1,14 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "google-auth-library": "^0.10.0",
+    "googleapis": "^20.1.0",
+    "minimist": "^1.2.0"
+  },
+  "scripts": {
+    "auth": "node index.js --auth"
+  }
+}
