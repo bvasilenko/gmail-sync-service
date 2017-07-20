@@ -66,6 +66,20 @@ const drive = {
 }
 
 const gmail = {
+  listThreads (client, email = '', userId = 'me') {
+    return new Promise((resolve, reject) => {
+      const service = Google.gmail('v1')
+      const opts = {
+        auth: client,
+        userId
+      }
+      if (email) {
+        opts.q = `from:${email} OR to:${email}`
+      }
+      service.users.threads.list(opts, getApiResponseHandler(resolve, reject))
+    })
+  },
+
   listHistory (client, userId = 'me') {
     return new Promise((resolve, reject) => {
       const service = Google.gmail('v1')
@@ -94,6 +108,18 @@ const gmail = {
         id: threadId,
         userId,
         format: 'full'
+      }, getApiResponseHandler(resolve, reject))
+    })
+  },
+
+  getAttachment (client, attachmentId, messageId, userId = 'me') {
+    return new Promise((resolve, reject) => {
+      const service = Google.gmail('v1')
+      service.users.messages.attachments.get({
+        auth: client,
+        id: attachmentId,
+        messageId,
+        userId
       }, getApiResponseHandler(resolve, reject))
     })
   }
