@@ -6,7 +6,8 @@
   "dependencies": {
     "google-auth-library": "^0.10.0",
     "googleapis": "^20.1.0",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "mongodb": "^2.2.30"
   },
   "scripts": {
     "auth": "node index.js --auth"

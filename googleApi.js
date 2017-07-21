@@ -5,20 +5,32 @@ const GoogleAuth = require('google-auth-library')
 
 const SCOPES = [
   'https://www.googleapis.com/auth/drive.metadata.readonly',
-  'https://mail.google.com/'
+  'https://mail.google.com/',
+  'email',
+  'profile',
+  'https://www.googleapis.com/auth/plus.me'
 ]
 function getClient (credentials, token = { }) {
   if (typeof credentials !== 'object') throw new Error('Missing credentials object arg')
-
   const clientSecret = credentials.web.client_secret
   const clientId = credentials.web.client_id
   const redirectUrl = credentials.web.redirect_uris[0]
+
   const auth = new GoogleAuth()
   const client = new auth.OAuth2(clientId, clientSecret, redirectUrl)
 
   client.credentials = token
 
   return client
+}
+
+function verifyIdToken (client, credentials, idToken) {
+  return new Promise((resolve, reject) => {
+    client.verifyIdToken(idToken, credentials.web.client_id, (err, login) => {
+      if (err) return reject(err)
+      resolve(login.getPayload())
+    })
+  })
 }
 
 function getAuthUrl (client) {
@@ -65,8 +77,20 @@ const drive = {
   }
 }
 
+const plus = {
+  getProfile (client, email = null, userId = 'me') {
+    return new Promise((resolve, reject) => {
+      const service = Google.plus('v1')
+      service.people.get({
+        auth: client,
+        userId
+      }, getApiResponseHandler(resolve, reject))
+    })
+  }
+}
+
 const gmail = {
-  listThreads (client, email = '', userId = 'me') {
+  listThreads (client, email = null, userId = 'me') {
     return new Promise((resolve, reject) => {
       const service = Google.gmail('v1')
       const opts = {
@@ -80,23 +104,28 @@ const gmail = {
     })
   },
 
-  listHistory (client, userId = 'me') {
+  listHistory (client, startHistoryId, userId = 'me') {
     return new Promise((resolve, reject) => {
       const service = Google.gmail('v1')
       service.users.history.list({
         auth: client,
+        startHistoryId,
         userId
       }, getApiResponseHandler(resolve, reject))
     })
   },
 
-  listMessages (client, userId = 'me') {
+  listMessages (client, email = null, userId = 'me') {
     return new Promise((resolve, reject) => {
       const service = Google.gmail('v1')
-      service.users.messages.list({
+      const opts = {
         auth: client,
         userId
-      }, getApiResponseHandler(resolve, reject))
+      }
+      if (email) {
+        opts.q = `from:${email} OR to:${email}`
+      }
+      service.users.messages.list(opts, getApiResponseHandler(resolve, reject))
     })
   },
 
@@ -106,8 +135,18 @@ const gmail = {
       service.users.threads.get({
         auth: client,
         id: threadId,
-        userId,
-        format: 'full'
+        userId
+      }, getApiResponseHandler(resolve, reject))
+    })
+  },
+
+  getMessage (client, messageId, userId = 'me') {
+    return new Promise((resolve, reject) => {
+      const service = Google.gmail('v1')
+      service.users.messages.get({
+        auth: client,
+        id: messageId,
+        userId
       }, getApiResponseHandler(resolve, reject))
     })
   },
@@ -126,9 +165,11 @@ const gmail = {
 }
 
 module.exports = {
+  verifyIdToken,
   getClient,
   getAuthUrl,
   exchangeCodeForToken,
   drive,
-  gmail
+  gmail,
+  plus
 }
