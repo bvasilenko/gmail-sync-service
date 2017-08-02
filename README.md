@@ -1,6 +1,14 @@
-# Google Gmail Sync
+# Gmail Sync Service
 
-### Usage:
+## Features:
+
+- Efficiently syncs Google Gmail inboxes with your own MongoDB database.
+
+- Supports updates via Gmail API server push notifications, using the recommended Google Cloud Pub/Sub and Gmail watch setup [explained here](https://developers.google.com/gmail/api/guides/push).
+
+- Syncs attachments based on content id (hash). Never fetches the same attachment twice.
+
+## Usage:
 
 #### Step 0: Setup a Google Cloud Platform Project.
 
@@ -125,8 +133,8 @@ $ ./server-tunnel.sh my-remote-host.nginx.com
 # Terminal window 2
 $ ./cli.js --server
 
-[GSS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
-[GSS] Server running on https://localhost:10003 ..
+# Or if you want to run a custom update function when you get a notification
+$ ./cli.js --server --onUpdate ./my-custom.update-function.js
 
 # Terminal window 3
 $ ./post-test.sh
