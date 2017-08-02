@@ -1,6 +1,6 @@
 {
   "name": "gmail-sync-service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "cli.js",
   "license": "MIT",
   "repository": "git@github.com:anrid/gmail-sync-service.git",
