@@ -1,8 +1,10 @@
 {
-  "name": "testing",
+  "name": "gmail-sync-service",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "cli.js",
   "license": "MIT",
+  "repository": "git@github.com:anrid/gmail-sync-service.git",
+  "keywords": "Google Gmail sync email message attachment inbox watch delta update",
   "dependencies": {
     "body-parser": "^1.17.2",
     "cors": "^2.8.4",
@@ -10,7 +12,6 @@
     "express": "^4.15.3",
     "googleapis": "^20.1.0",
     "minimist": "^1.2.0",
-    "mongodb": "^2.2.30",
-    "uws": "^8.14.0"
+    "mongodb": "^2.2.30"
   }
 }

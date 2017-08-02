@@ -3,7 +3,7 @@
 const Google = require('googleapis')
 const GoogleAuth = Google.auth.OAuth2
 
-const credentials = require(process.env.GGS_GOOGLE_CREDENTIALS)
+const credentials = require(process.env.GSS_GOOGLE_CREDENTIALS)
 const { error } = require('./log')
 
 const SCOPES = [

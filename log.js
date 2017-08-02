@@ -1,5 +1,5 @@
 
 module.exports = {
-  log: (...s) => console.log('[GGS]', ...s),
-  error: (...s) => console.error('[GGS] Error:', ...s)
+  log: (...s) => console.log('[GSS]', ...s),
+  error: (...s) => console.error('[GSS] Error:', ...s)
 }

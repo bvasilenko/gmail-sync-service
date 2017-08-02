@@ -3,27 +3,24 @@
 const Https = require('https')
 const Express = require('express')
 const Fs = require('fs')
-const WebSocketServer = require('uws').Server
 const Service = require('./google-service')
 const Mongo = require('./mongodb')
 const { log, error } = require('./log')
 
 async function run (opts) {
-  const host = process.env.GGS_HOST
-  const port = process.env.GGS_PORT
+  const host = process.env.GSS_HOST
+  const port = process.env.GSS_PORT
 
   // Connect to MongoDB and setup indices.
-  const db = await Mongo.connect(process.env.GGS_MONGO_URL)
+  const db = await Mongo.connect(process.env.GSS_MONGO_URL)
   await Service.setupDb(db)
 
   const app = setupExpressApp(port, db, opts)
 
   const server = Https.createServer({
-    cert: Fs.readFileSync(process.env.GGS_CERT),
-    key: Fs.readFileSync(process.env.GGS_CERT_KEY)
+    cert: Fs.readFileSync(process.env.GSS_CERT),
+    key: Fs.readFileSync(process.env.GSS_CERT_KEY)
   }, app)
-
-  setupWebSocketServer(server, db)
 
   server.listen(port, host, () => {
     log(`Server running on https://${host}:${port} ..`)
@@ -47,7 +44,7 @@ function setupExpressApp (port, db, { onUpdate }) {
   app.options('/', cors())
 
   app.get('/', (req, res) => {
-    res.end('[GGS] Server: ' + new Date())
+    res.end('[GSS] Server: ' + new Date())
   })
 
   app.post('/gmail-webhook', (req, res) => {
@@ -57,15 +54,6 @@ function setupExpressApp (port, db, { onUpdate }) {
   })
 
   return app
-}
-
-function setupWebSocketServer (server, topics) {
-  const wss = new WebSocketServer({ server, path: '/' })
-  wss.on('connection', socket => {
-    socket.on('message', data => {
-      socket.send(data, { binary: Buffer.isBuffer(data) })
-    })
-  })
 }
 
 module.exports = {

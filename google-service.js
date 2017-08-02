@@ -33,8 +33,8 @@ async function fetchMessages (opts) {
 
   if (opts.watch) {
     // Setup Gmail watch for the token owner’s inbox.
-    log(`Setting up Gmail watch for ${email} (id: ${userId}). Publishing to topic ${process.env.GGS_GOOGLE_TOPIC_NAME}`)
-    result = await Google.gmail.watchInbox(client, process.env.GGS_GOOGLE_TOPIC_NAME)
+    log(`Setting up Gmail watch for ${email} (id: ${userId}). Publishing to topic ${process.env.GSS_GOOGLE_TOPIC_NAME}`)
+    result = await Google.gmail.watchInbox(client, process.env.GSS_GOOGLE_TOPIC_NAME)
     if (result && result.expiration) {
       const watchData = Object.assign({ }, result, { email })
       await saveWatch(db, userId, watchData)
@@ -77,8 +77,8 @@ async function fetchMessages (opts) {
 
   // Force refetching of messages if given --force flag.
   if (opts.force) {
-    await db.collection('ggs_messages').deleteMany({ userId })
-    await db.collection('ggs_attachment_content').deleteMany({ userId })
+    await db.collection('gss_messages').deleteMany({ userId })
+    await db.collection('gss_attachment_content').deleteMany({ userId })
   }
 
   // Filter out messages that we’ve already fetched.
@@ -127,10 +127,10 @@ async function handleGoogleNotification (db, json, updateFunction) {
 
     // Allow test notifications to be inserted multiple times.
     if (data._id === 'TEST') {
-      await db.collection('ggs_notifications').deleteOne({ _id: 'TEST' })
+      await db.collection('gss_notifications').deleteOne({ _id: 'TEST' })
     }
 
-    await db.collection('ggs_notifications').insertOne(data)
+    await db.collection('gss_notifications').insertOne(data)
     log(`Saved google push notification for ${data.email}, published: ${data.created}`)
 
     if (typeof updateFunction === 'function') {
@@ -141,13 +141,13 @@ async function handleGoogleNotification (db, json, updateFunction) {
 }
 
 function getWatchByEmail (db, email) {
-  return db.collection('ggs_watch').findOne({ email })
+  return db.collection('gss_watch').findOne({ email })
 }
 
 function saveWatch (db, userId, data) {
   data.expiration = parseInt(data.expiration, 10)
   log(`Saving Gmail watch for ${data.email} (id: ${userId}) expiring on ${new Date(data.expiration)}`)
-  return db.collection('ggs_watch').findOneAndUpdate(
+  return db.collection('gss_watch').findOneAndUpdate(
     { _id: userId },
     { $set: data },
     { upsert: true } // upsert === true NOT upsert === 1 !
@@ -155,7 +155,7 @@ function saveWatch (db, userId, data) {
 }
 
 async function getLatestMessage (db, userId) {
-  const [message] = await db.collection('ggs_messages')
+  const [message] = await db.collection('gss_messages')
   .find({ userId })
   .sort({ _id: -1 })
   .limit(1)
@@ -164,12 +164,12 @@ async function getLatestMessage (db, userId) {
 }
 
 async function checkAttachmentContentHash (db, contentId) {
-  return db.collection('ggs_attachment_content')
+  return db.collection('gss_attachment_content')
   .findOne({ _id: contentId }, { fields: { messages: 0 } })
 }
 
 async function saveAttachmentContentHash (db, contentId, messageId, other = { }) {
-  const c = db.collection('ggs_attachment_content')
+  const c = db.collection('gss_attachment_content')
   const exists = await c.findOne({ _id: contentId })
   if (!exists) {
     return c.insertOne(Object.assign({ _id: contentId, messages: [messageId] }, other))
@@ -178,13 +178,13 @@ async function saveAttachmentContentHash (db, contentId, messageId, other = { })
 }
 
 async function saveMessages (db, messages) {
-  const result = await db.collection('ggs_messages')
+  const result = await db.collection('gss_messages')
   .insertMany(messages)
   log(`Saved ${result.result.n} messages.`)
 }
 
 async function filterExistingMessages (db, messageIds) {
-  const messages = await db.collection('ggs_messages')
+  const messages = await db.collection('gss_messages')
   .find({ _id: { $in: messageIds } })
   .project({ _id: 1 })
   .toArray()
@@ -299,9 +299,9 @@ function getMessage (m, userId) {
 }
 
 async function setupDb (db) {
-  await db.ensureIndex('ggs_messages', { userId: 1, fromEmail: 1 })
-  await db.ensureIndex('ggs_messages', { userId: 1, toEmail: 1 })
-  await db.ensureIndex('ggs_watch', { email: 1 })
+  await db.ensureIndex('gss_messages', { userId: 1, fromEmail: 1 })
+  await db.ensureIndex('gss_messages', { userId: 1, toEmail: 1 })
+  await db.ensureIndex('gss_watch', { email: 1 })
   log('Google Gmail sync: setup db indexes.')
 }
 

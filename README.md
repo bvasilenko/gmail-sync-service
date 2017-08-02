@@ -10,21 +10,21 @@ Go [here](https://console.cloud.google.com/apis/dashboard), setup a new project 
 
 ```bash
 # Google Oauth client ID credentials
-GGS_GOOGLE_CREDENTIALS=../google-gmail-sync-credentials.json
+GSS_GOOGLE_CREDENTIALS=../google-gmail-sync-credentials.json
 # Google Pub/Sub topic to subscribe to for Gmail watch updates.
-GGS_GOOGLE_TOPIC_NAME=projects/taskworld/topics/gmail-webhook
+GSS_GOOGLE_TOPIC_NAME=projects/taskworld/topics/gmail-webhook
 # MongoDB connection URL.
-GGS_MONGO_URL=mongodb://localhost/db_dev
+GSS_MONGO_URL=mongodb://localhost/db_dev
 # Where to store the user token (used mainly while testing).
-GGS_TOKEN_CACHE_FILE=/tmp/user_token.json
+GSS_TOKEN_CACHE_FILE=/tmp/user_token.json
 # Server host
-GGS_HOST=localhost
+GSS_HOST=localhost
 # Server port
-GGS_PORT=10003
+GSS_PORT=10003
 # Server TLS certificate
-GGS_CERT=../keys/cert.crt
+GSS_CERT=../keys/cert.crt
 # Server TLS certificate private key
-GGS_CERT_KEY=../keys/cert.key
+GSS_CERT_KEY=../keys/cert.key
 ```
 
 #### Step 2: Test the command-line tool.
@@ -37,7 +37,7 @@ $ yarn install
 $ ./cli.js
 
     Usage:
-    node cli.js
+    ./cli.js
       --auth          Get Google Auth URL.
       --code          Exchange code for access & refresh tokens.
 
@@ -78,21 +78,21 @@ $ ./cli.js \
   --email  ace@base.se \  # Token owner’s email address.
   --userId USER1 \        # Token owner’s user id, i.e. a reference to a user id in your system.
 
-[GGS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
-[GGS] Kept 8 / 8 messages.
-[GGS] 1. Fetching message 15d6d836d7420001 ..
-[GGS] 2. Fetching message 15d6821649350002 ..
-[GGS] 3. Fetching message 15d67c3811be0003 ..
-[GGS] 4. Fetching message 15d67970ef890004 ..
-[GGS] 5. Fetching message 15d64d2699cc0005 ..
-[GGS] 6. Fetching message 15d5f9b7ca420006 ..
-[GGS] 7. Fetching message 15d502e957370007 ..
-[GGS] 8. Fetching message 15d502048ee30008 ..
-[GGS] Saved attachment: "Screen Shot 2017-07-17 at 5.37.30 PM.png" (22123 bytes) to /tmp/e987c208149f17e35c83fad59c80f7a63fe94c7bcc5ebce363c5ce01f019e558.png
-[GGS] Saved attachment: "Screen Shot 2017-07-20 at 5.46.22 PM.png" (93685 bytes) to /tmp/29a993df364c1455134e9ebb7c0975af0580977aef835a1b994d9e2845d4c452.png
-[GGS] Saved attachment: "Screen Shot 2017-07-05 at 23.02.19.png" (48765 bytes) to /tmp/19403eae291ad4b1138d781d08ecd2350ed4d6ed336485e1cd69f86bb88256f4.png
-[GGS] Downloaded 3 / 15 attachments (identical: 12).
-[GGS] Saved 8 messages.
+[GSS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
+[GSS] Kept 8 / 8 messages.
+[GSS] 1. Fetching message 15d6d836d7420001 ..
+[GSS] 2. Fetching message 15d6821649350002 ..
+[GSS] 3. Fetching message 15d67c3811be0003 ..
+[GSS] 4. Fetching message 15d67970ef890004 ..
+[GSS] 5. Fetching message 15d64d2699cc0005 ..
+[GSS] 6. Fetching message 15d5f9b7ca420006 ..
+[GSS] 7. Fetching message 15d502e957370007 ..
+[GSS] 8. Fetching message 15d502048ee30008 ..
+[GSS] Saved attachment: "Screen Shot 2017-07-17 at 5.37.30 PM.png" (22123 bytes) to /tmp/e987c208149f17e35c83fad59c80f7a63fe94c7bcc5ebce363c5ce01f019e558.png
+[GSS] Saved attachment: "Screen Shot 2017-07-20 at 5.46.22 PM.png" (93685 bytes) to /tmp/29a993df364c1455134e9ebb7c0975af0580977aef835a1b994d9e2845d4c452.png
+[GSS] Saved attachment: "Screen Shot 2017-07-05 at 23.02.19.png" (48765 bytes) to /tmp/19403eae291ad4b1138d781d08ecd2350ed4d6ed336485e1cd69f86bb88256f4.png
+[GSS] Downloaded 3 / 15 attachments (identical: 12).
+[GSS] Saved 8 messages.
 ```
 
 #### Step 5: Fetch updates since the last fetched message.
@@ -100,8 +100,8 @@ $ ./cli.js \
 ```bash
 $ ./cli.js --messages --email ace@base.se --userId USER1 --update
 
-[GGS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
-[GGS] Found 0 new / added messages since history id 1888.
+[GSS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
+[GSS] Found 0 new / added messages since history id 1888.
 ```
 
 #### Step 6: Setup a watch for this user, i.e. the token owner.
@@ -109,9 +109,9 @@ $ ./cli.js --messages --email ace@base.se --userId USER1 --update
 ```bash
 $ ./cli.js --messages --email ace@base.se --userId USER1 --watch
 
-[GGS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
-[GGS] Setting up Gmail watch for ace@base.se (id: USER1). Publishing to topic projects/taskworld-crm-174408/topics/gmail-webhook
-[GGS] Saving Gmail watch for ace@base.se (id: USER1) expiring on Mon Jul 31 2017 08:40:36 GMT+0700 (+07)
+[GSS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
+[GSS] Setting up Gmail watch for ace@base.se (id: USER1). Publishing to topic projects/taskworld-crm-174408/topics/gmail-webhook
+[GSS] Saving Gmail watch for ace@base.se (id: USER1) expiring on Mon Jul 31 2017 08:40:36 GMT+0700 (+07)
 ```
 
 #### Step 7: Start a local server to listen for Google notifications (nice while testing).
@@ -125,8 +125,8 @@ $ ./server-tunnel.sh my-remote-host.nginx.com
 # Terminal window 2
 $ ./cli.js --server
 
-[GGS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
-[GGS] Server running on https://localhost:10003 ..
+[GSS] Connected to MongoDB server: mongodb://localhost/db_dev (database: db_dev)
+[GSS] Server running on https://localhost:10003 ..
 
 # Terminal window 3
 $ ./post-test.sh
@@ -137,7 +137,7 @@ $ ./post-test.sh
 
 Running a fetch produces the following collections in MongoDB:
 
-#### Collection: ggs_messages
+#### Collection: gss_messages
 ```json
 [
   {

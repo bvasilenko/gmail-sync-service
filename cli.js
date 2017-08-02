@@ -24,8 +24,8 @@ async function run (opts) {
     }
 
     if (opts.messages) {
-      opts.db = await Mongo.connect(process.env.GGS_MONGO_URL)
-      opts.client.credentials = require(process.env.GGS_TOKEN_CACHE_FILE)
+      opts.db = await Mongo.connect(process.env.GSS_MONGO_URL)
+      opts.client.credentials = require(process.env.GSS_TOKEN_CACHE_FILE)
       return await GoogleService.fetchMessages(opts)
     }
 
